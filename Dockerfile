@@ -23,4 +23,4 @@ RUN mkdir -p /var/lib/ssdb && \
 
 ENV TZ Asia/Shanghai
 EXPOSE 8888
-ENTRYPOINT /usr/bin/ssdb-server /etc/ssdb.conf
+ENTRYPOINT /usr/bin/ssdb-server -d /etc/ssdb.conf
