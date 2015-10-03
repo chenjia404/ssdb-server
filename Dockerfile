@@ -5,7 +5,7 @@ MAINTAINER wendal "chenjiablog@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
 
-RUN yum install -y wget unzip && \
+RUN yum install -y wget unzip make gcc g++ && \
   wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip && \
   unzip master && \
   cd ssdb-master && \
