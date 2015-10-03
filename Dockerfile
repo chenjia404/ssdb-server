@@ -4,7 +4,9 @@ MAINTAINER wendal "chenjiablog@gmail.com"
 # Set the env variable DEBIAN_FRONTEND to noninteractive
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip && \
+
+RUN yum install -y wget && \
+  wget --no-check-certificate https://github.com/ideawu/ssdb/archive/master.zip && \
   unzip master && \
   cd ssdb-master && \
   make && \
