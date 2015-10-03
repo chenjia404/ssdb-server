@@ -12,4 +12,4 @@ RUN apt-get update && \
 
 ENV TZ Asia/Shanghai
 EXPOSE 8888
-ENTRYPOINT /usr/bin/ssdb-server /var/lib/ssdb/ssdb.conf
+#ENTRYPOINT /usr/bin/ssdb-server /var/lib/ssdb/ssdb.conf
