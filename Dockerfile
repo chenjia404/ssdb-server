@@ -1,8 +1,5 @@
 FROM alpine:3 as builder
 
-MAINTAINER unoexperto <unoexperto.support@mailnull.com>
-
-# python is necessary for ssdb-cli
 RUN apk update && \
     apk add gcc  && \
     apk add --virtual .build-deps autoconf make g++ git
@@ -10,11 +7,8 @@ RUN apk update && \
 RUN mkdir -p /usr/src/ssdb
 
 RUN git clone --depth 1 https://github.com/ideawu/ssdb.git /usr/src/ssdb && \
-  make -j8 -C /usr/src/ssdb && \
-  make -C /usr/src/ssdb install && \
-  rm -rf /usr/src/ssdb
-
-RUN apk del .build-deps
+  make  -C /usr/src/ssdb && \
+  make -C /usr/src/ssdb install
 
 FROM alpine:3
 RUN  apk add gcc 
