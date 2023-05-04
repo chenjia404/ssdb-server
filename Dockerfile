@@ -1,15 +1,34 @@
-FROM ubuntu
-MAINTAINER wendal "wendal1985@gmail.com"
+FROM alpine:3 as builder
 
-RUN apt-get update && \
-  apt-get install -y --force-yes git make gcc g++ && apt-get clean && \
-  git clone --depth 1 https://github.com/ideawu/ssdb.git ssdb && \
-  cd ssdb && make && make install && cp ssdb-server /usr/bin && \
-  apt-get remove -y --force-yes git make gcc g++ && \
-  apt-get autoremove -y && \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-  cd .. && yes | rm -r ssdb
+MAINTAINER unoexperto <unoexperto.support@mailnull.com>
 
-ENV TZ Asia/Shanghai
+# python is necessary for ssdb-cli
+RUN apk update --no-cache && \
+    apk add --update --no-cache gcc    && \
+    apk add --virtual .build-deps autoconf make g++ git 
+
+RUN mkdir -p /usr/src/ssdb
+
+RUN git clone --depth 1 https://github.com/ideawu/ssdb.git /usr/src/ssdb && \
+  make -C /usr/src/ssdb && \
+  make -C /usr/src/ssdb install && \
+  rm -rf /usr/src/ssdb
+
+FROM alpine:3
+
+COPY --from=builder  /usr/local/ssdb /usr/local/ssdb
+
+RUN sed \
+    -e 's@ip:.*@ip: 0.0.0.0@' \
+    -e 's@cache_size:.*@cache_size: 4096@' \
+    -e 's@write_buffer_size:.*@write_buffer_size: 512@' \
+    -e 's@level:.*@level: info@' \
+    -e 's@output:.*@output:@' \
+    -i /usr/local/ssdb/ssdb.conf
+
 EXPOSE 8888
-#ENTRYPOINT /usr/bin/ssdb-server /var/lib/ssdb/ssdb.conf
+VOLUME /usr/local/ssdb/var/data
+VOLUME /usr/local/ssdb/var/meta
+WORKDIR /usr/local/ssdb/
+
+CMD ["/usr/local/ssdb/ssdb-server", "/usr/local/ssdb/ssdb.conf"]
