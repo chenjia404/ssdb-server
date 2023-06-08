@@ -7,8 +7,8 @@ RUN apk update && \
 RUN mkdir -p /usr/src/ssdb
 
 RUN git clone --depth 1 https://github.com/ideawu/ssdb.git /usr/src/ssdb && \
-  make  -C /usr/src/ssdb && \
-  make -C /usr/src/ssdb install
+  make -j -C /usr/src/ssdb && \
+  make -j -C /usr/src/ssdb install
 
 FROM alpine:3
 RUN  apk add gcc 
@@ -23,8 +23,7 @@ RUN sed \
     -i /usr/local/ssdb/ssdb.conf
 
 EXPOSE 8888
-VOLUME /usr/local/ssdb/var/data
-VOLUME /usr/local/ssdb/var/meta
+VOLUME /usr/local/ssdb/var/
 WORKDIR /usr/local/ssdb/
 
-CMD ["/usr/local/ssdb/ssdb-server", "/usr/local/ssdb/ssdb.conf"]
+ENTRYPOINT rm -f /usr/local/ssdb/var/ssdb.pid && /usr/local/ssdb/ssdb-server /usr/local/ssdb/ssdb.conf
